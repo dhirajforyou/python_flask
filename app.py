@@ -1,6 +1,8 @@
 from flask import Flask, request
+import logging
 
 app = Flask(__name__)
+logger = logging.getLogger(__name__)
 
 
 @app.route("/")
@@ -22,4 +24,5 @@ def sayHello(name=None):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
