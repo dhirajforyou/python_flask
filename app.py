@@ -30,6 +30,16 @@ def sayHello(name=None):
     return "Hello {}".format(name)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return "Page not found", 404
+
+
+@app.errorhandler(500)
+def unexpected_error(e):
+    return "Something grave", 500
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
