@@ -7,7 +7,11 @@ logger = logging.getLogger(__name__)
 
 @app.route("/")
 def index():
-    return "Hello world"
+    ret = "Hello world"
+    agent = request.headers.get("User-Agent")
+    if agent:
+        ret = "{}<br>User Agent: {}".format(ret, agent)
+    return ret
 
 
 @app.route("/hello/")
