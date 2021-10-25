@@ -15,11 +15,14 @@ def index():
 @app.route("/hello/<path:name>")
 def sayHello(name=None):
     if name:
+        logger.debug("Name found in the url")
         return "Hello {}".format(name)
     if request.args.get("name"):
+        logger.debug("Name taken from get param")
         name = request.args.get("name")
     else:
         name = "Stranger"
+        logger.debug("Using default name %s " % name)
     return "Hello {}".format(name)
 
 
