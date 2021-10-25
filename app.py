@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from werkzeug.exceptions import HTTPException
 import logging
 
 app = Flask(__name__)
@@ -30,14 +31,13 @@ def sayHello(name=None):
     return "Hello {}".format(name)
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return "Page not found", 404
-
-
-@app.errorhandler(500)
-def unexpected_error(e):
-    return "Something grave", 500
+@app.errorhandler(Exception)
+def handle_error(e):
+    logger.debug("Exception %s" % e)
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return jsonify(error=str(e)), code
 
 
 if __name__ == "__main__":
