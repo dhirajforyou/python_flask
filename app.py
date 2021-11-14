@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from werkzeug.exceptions import HTTPException
+from flask_bootstrap import Bootstrap
 import logging
 
-app = Flask(__name__)
 logger = logging.getLogger(__name__)
-
+app = Flask(__name__)
+bootstrap = Bootstrap(app)
 
 @app.route("/")
 @app.route("/index.html")

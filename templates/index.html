@@ -1,17 +1,15 @@
-<html>
-  <body>
+{% extends "bootstrap/base.html" %}
 
+{% block content %}  
+  <div class="container">
     {% if message %}
-      <div>
-        {{message}}
-      </div>
+      {{message}}
     {% endif %}
-
+  </div>
+  <div class="container">
     {% if agent %}
-      <div>
-        User Agent: {{agent}}
-      </div>
+      User Agent: {{agent}}
     {% endif %}
-    
-  </body>
-</html>
+  </div>
+{% endblock %}
+
