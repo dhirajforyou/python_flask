@@ -1,12 +1,17 @@
 <html>
-	<body>
-		{% if message %}
-			<div>{{message}}</div>
-		{% endif %}
-		<div>
-			{% if agent %}
-				User Agent: {{agent}}
-			{% endif %}
-		</div>
-	</body>
+  <body>
+
+    {% if message %}
+      <div>
+        {{message}}
+      </div>
+    {% endif %}
+
+    {% if agent %}
+      <div>
+        User Agent: {{agent}}
+      </div>
+    {% endif %}
+    
+  </body>
 </html>
