@@ -11,9 +11,6 @@ logger = logging.getLogger(__name__)
 def index():
     message = "Hello world"
     agent = request.headers.get("User-Agent")
-    if agent:
-        ret = "User Agent: {}".format(agent)
-    # return "{}<br>{}".format(message, ret)
     return render_template("index.html", message=message, agent=agent)
 
 
