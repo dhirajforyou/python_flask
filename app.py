@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from werkzeug.exceptions import HTTPException
 import logging
 
@@ -7,12 +7,14 @@ logger = logging.getLogger(__name__)
 
 
 @app.route("/")
+@app.route("/index.html")
 def index():
-    ret = "Hello world"
+    message = "Hello world"
     agent = request.headers.get("User-Agent")
     if agent:
-        ret = "{}<br>User Agent: {}".format(ret, agent)
-    return ret
+        ret = "User Agent: {}".format(agent)
+    # return "{}<br>{}".format(message, ret)
+    return render_template("index.html", message=message, agent=agent)
 
 
 @app.route("/hello/")
