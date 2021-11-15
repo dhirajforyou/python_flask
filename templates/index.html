@@ -1,0 +1,21 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}  
+  <div class="container">
+    {% if message %}
+      {{message}}
+    {% endif %}
+  </div>
+  <div class="container">
+    {% if agent %}
+      User Agent: {{agent}}
+    {% endif %}
+  </div>
+  <div class="container">
+    {% if product %}
+      {{product | safe}}
+    {% endif %}
+  </div>
+
+{% endblock %}
+

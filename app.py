@@ -1,18 +1,33 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from werkzeug.exceptions import HTTPException
+from flask_bootstrap import Bootstrap
+import json
+import json2table
 import logging
 
-app = Flask(__name__)
 logger = logging.getLogger(__name__)
+app = Flask(__name__)
+bootstrap = Bootstrap(app)
+
+# sample product data
+data = json.load(open("data.json"))
+
+
+def emit_html_table(json_object):
+    build_direction = "LEFT_TO_RIGHT"
+    table_attributes = {"style": "width:100%"}
+    html = json2table.convert(json_object, build_direction=build_direction,
+                              table_attributes=table_attributes)
+    return html
 
 
 @app.route("/")
+@app.route("/index.html")
 def index():
-    ret = "Hello world"
+    message = "Hello world"
     agent = request.headers.get("User-Agent")
-    if agent:
-        ret = "{}<br>User Agent: {}".format(ret, agent)
-    return ret
+    template_data = {"message": message, "agent": agent, "product": emit_html_table(data)}
+    return render_template("index.html", **template_data)
 
 
 @app.route("/hello/")
