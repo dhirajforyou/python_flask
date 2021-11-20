@@ -33,7 +33,7 @@ def index():
 @app.route("/hello/")
 @app.route("/hello/<string:name>")
 @app.route("/hello/<path:name>")
-def sayHello(name=None):
+def say_hello(name=None):
     if name:
         logger.debug("Name found in the url")
         return "Hello {}".format(name)
