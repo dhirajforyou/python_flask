@@ -7,6 +7,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
+
+# serve bootstrap resources from local.
+app.config["BOOTSTRAP_SERVE_LOCAL"] = True
+
 bootstrap = Bootstrap(app)
 
 # sample product data
