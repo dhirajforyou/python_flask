@@ -60,14 +60,20 @@ def index():
 def say_hello(name=None):
     if name:
         logger.debug("Name found in the url")
-        return "Hello {}".format(name)
-    if request.args.get("name"):
+    elif request.args.get("name"):
         logger.debug("Name taken from get param")
         name = request.args.get("name")
     else:
         name = "Stranger"
         logger.debug("Using default name %s " % name)
-    return "Hello {}".format(name)
+    # return "Hello {}".format(name)
+    template_data = {"name": name, "app": app}
+    return render_template("user.html", **template_data)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html", app=app)
 
 
 @app.errorhandler(Exception)
