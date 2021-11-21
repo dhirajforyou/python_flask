@@ -58,7 +58,7 @@ def favicon():
 
 
 class Nameform(Form):
-    name = StringField("What is your name", validators=[Required()])
+    name = StringField("What is your name", validators=[Required()], render_kw={'autofocus': True})
     submit = SubmitField("Submit")
 
 
