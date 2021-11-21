@@ -3,7 +3,7 @@ import logging
 import os
 from datetime import datetime
 
-from flask import Flask, jsonify, render_template, send_from_directory, g, session, redirect, url_for
+from flask import Flask, jsonify, render_template, send_from_directory, g, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import Form
@@ -50,11 +50,17 @@ class Nameform(Form):
 @app.route("/", methods=['GET', 'POST'])
 def index():
     form = Nameform()
-    name = "Stranger"
-    checkmode = None
     if form.validate_on_submit():
+        old_name = session.get("name")
+        if old_name:
+            if old_name != form.name.data:
+                flash("Hmm... Looks like you have changed your name.", 'warning')
+            else:
+                flash("Glad to see you again... !", 'info')
         session["name"] = form.name.data
         session["checkmode"] = form.checkmode.data
+        form.name.data = ''
+        form.checkmode.data = ''
         return redirect(url_for('index'))
     template_data = {"name": session.get("name"), "checkmode": session.get("checkmode", None), "form": form}
     return render_template("user.html", **template_data)
