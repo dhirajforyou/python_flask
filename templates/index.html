@@ -3,9 +3,13 @@
 
 {% block page_content %}
   <div class="page-header">
-    <h1>
-      {% if message %} {{message}} {% endif %}
-    </h1>
+      <h1>Hello,
+        {% if name %}
+          {{name}}!
+        {% else %}
+          stranger!
+        {% endif %}
+      </h1>
   </div>
   <div class="container">
     {% if product %}
