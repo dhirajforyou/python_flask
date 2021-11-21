@@ -8,7 +8,10 @@ import json2table
 from flask import Flask, request, jsonify, render_template, send_from_directory, g
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_wtf import Form
 from werkzeug.exceptions import HTTPException
+from wtforms import StringField, SubmitField
+from wtforms.validators import Required
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
@@ -18,6 +21,8 @@ app.config["BOOTSTRAP_SERVE_LOCAL"] = True
 if os.path.exists('static/js/lib/moment-with-locales.min.js'):
     # if momentjs present in the local, then serve it from local.
     app.config["local_moment"] = 'js/lib/moment-with-locales.min.js'
+
+app.config["SECRET_KEY"] = "shhhh... its private."
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
@@ -52,11 +57,16 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'), 'favicon.png')
 
 
-@app.route("/")
-@app.route("/index.html")
-@app.route("/hello/")
-@app.route("/hello/<string:name>")
-@app.route("/hello/<path:name>")
+class Nameform(Form):
+    name = StringField("What is your name", validators=[Required()])
+    submit = SubmitField("Submit")
+
+
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/index.html", methods=['GET', 'POST'])
+@app.route("/hello/", methods=['GET', 'POST'])
+@app.route("/hello/<string:name>", methods=['GET', 'POST'])
+@app.route("/hello/<path:name>", methods=['GET', 'POST'])
 def say_hello(name=None):
     if name:
         logger.debug("Name found in the url")
@@ -66,9 +76,13 @@ def say_hello(name=None):
     else:
         name = "Stranger"
         logger.debug("Using default name %s " % name)
-
-    toSend = get_data()
-    template_data = {"name": name, "product": emit_html_table(toSend)}
+    form = Nameform()
+    if form.validate_on_submit():
+        user_name = form.name.data
+        form.name.data = ''
+        if user_name:
+            name = user_name
+    template_data = {"name": name, "form": form}
     return render_template("user.html", **template_data)
 
 
