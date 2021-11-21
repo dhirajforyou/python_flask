@@ -8,9 +8,13 @@
 #}
 
 {% block scripts%}
-{{ super() }}
-{{ moment.include_moment(local_js=url_for('static', filename=app.config.get("local_moment"), _external=True)) }}
-{{ moment.locale() }}
+  {{ super() }}
+  {% if app.config.get("local_moment") %}
+    {{ moment.include_moment(local_js=url_for('static', filename=app.config.get("local_moment"), _external=True)) }}
+  {% else %}
+    {{ moment.include_moment() }}
+  {% endif %}
+  {{ moment.locale() }}
 {% endblock %}
 
 {% block content %}
