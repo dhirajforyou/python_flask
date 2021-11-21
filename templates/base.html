@@ -1,5 +1,10 @@
 {% extends 'bootstrap/base.html' %}
 
+{% block styles %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/main.css')}} " rel="stylesheet">
+{% endblock %}
+
 {% block scripts%}
   {{ super() }}
   {% if app.config.get("local_moment") %}
@@ -49,7 +54,9 @@
           User Agent: {{agent}}
         {% endif %}
       </div>
-  <div class="container">
-      {% block page_content %}{% endblock %}
-  </div>
+    <div class="container">
+        {% block page_content %}{% endblock %}
+    </div>
+    <!-- Footer -->
+    {% include 'footer.html' %}
 {% endblock %}
