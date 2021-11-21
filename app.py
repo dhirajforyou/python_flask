@@ -49,7 +49,8 @@ def index():
     agent = request.headers.get("User-Agent")
     toSend = get_data()
     toSend["lang"] = request.headers.get('Accept-Language')
-    template_data = {"message": message, "agent": agent, "product": emit_html_table(toSend), "app": app,
+    template_data = {"message": message, "agent": agent,
+                     "product": emit_html_table(toSend),
                      "current_time": datetime.utcnow()}
     return render_template("index.html", **template_data)
 
@@ -67,13 +68,13 @@ def say_hello(name=None):
         name = "Stranger"
         logger.debug("Using default name %s " % name)
     # return "Hello {}".format(name)
-    template_data = {"name": name, "app": app}
+    template_data = {"name": name}
     return render_template("user.html", **template_data)
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html", app=app)
+    return render_template("404.html")
 
 
 @app.errorhandler(Exception)
