@@ -1,14 +1,15 @@
-import copy
-import json
+
 import logging
 import os
 from datetime import datetime
 
-import json2table
-from flask import Flask, request, jsonify, render_template, send_from_directory, g
+from flask import Flask, jsonify, render_template, send_from_directory, g, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_wtf import Form
 from werkzeug.exceptions import HTTPException
+from wtforms import StringField, SubmitField, RadioField
+from wtforms.validators import DataRequired
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
@@ -18,22 +19,10 @@ app.config["BOOTSTRAP_SERVE_LOCAL"] = True
 if os.path.exists('static/js/lib/moment-with-locales.min.js'):
     # if momentjs present in the local, then serve it from local.
     app.config["local_moment"] = 'js/lib/moment-with-locales.min.js'
+
+app.config["SECRET_KEY"] = "shhhh... its private."
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
-data = json.load(open("data.json"))
-
-
-def get_data():
-    return copy.deepcopy(data)
-
-
-def emit_html_table(json_object):
-    build_direction = "LEFT_TO_RIGHT"
-    table_attributes = {"style": "width:100%"}
-    html = json2table.convert(json_object, build_direction=build_direction,
-                              table_attributes=table_attributes)
-    return html
 
 
 @app.before_request
@@ -52,23 +41,30 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'), 'favicon.png')
 
 
-@app.route("/")
-@app.route("/index.html")
-@app.route("/hello/")
-@app.route("/hello/<string:name>")
-@app.route("/hello/<path:name>")
-def say_hello(name=None):
-    if name:
-        logger.debug("Name found in the url")
-    elif request.args.get("name"):
-        logger.debug("Name taken from get param")
-        name = request.args.get("name")
-    else:
-        name = "Stranger"
-        logger.debug("Using default name %s " % name)
+class Nameform(Form):
+    name = StringField("What is your name", validators=[DataRequired()], render_kw={'autofocus': True})
+    # checkmode = RadioField('checkmode', validators=[DataRequired()], choices=[('in', 'Check-In'), ('out', 'Check-Out')])
+    submit = SubmitField("Submit")
 
-    toSend = get_data()
-    template_data = {"name": name, "product": emit_html_table(toSend)}
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    form = Nameform()
+    if form.validate_on_submit():
+        old_name = session.get("name")
+        if old_name:
+            if old_name != form.name.data:
+                flash("Hmm... Looks like you have changed your name.", 'warning')
+            else:
+                flash("Glad to see you again... !", 'info')
+        session["name"] = form.name.data
+        # session["checkmode"] = form.checkmode.data
+        form.name.data = ''
+        # form.checkmode.data = ''
+        return redirect(url_for('index'))
+    template_data = {"name": session.get("name", "Stranger"),
+                     # "checkmode": session.get("checkmode", None),
+                     "form": form}
     return render_template("user.html", **template_data)
 
 
