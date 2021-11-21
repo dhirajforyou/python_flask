@@ -2,6 +2,11 @@
 
 {% block page_content %}
   <div class="page-header">
-      <h1>Hello, {{name}}</h1>
+      <h1>Hello, {{name}}!</h1>
+  </div>
+  <div class="container">
+    {% if product %}
+      {{product | safe}}
+    {% endif %}
   </div>
 {% endblock %}

@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 
 import json2table
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, render_template, send_from_directory, g
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from werkzeug.exceptions import HTTPException
@@ -36,6 +36,16 @@ def emit_html_table(json_object):
     return html
 
 
+@app.before_request
+def before_request():
+    # time.time() will give epoch time, which momentjs will give error to parse
+    g.request_start_time = datetime.utcnow()  # time.time()
+    # creates a function that returns the time since before_request was called.
+    # The function is called later when any template is rendered (ex. in index.html)
+    # which happens after the request has completed.
+    # g.request_time = lambda: "%.5fs" % (time.time() - g.request_start_time)
+
+
 @app.route("/favicon.ico")
 def favicon():
     # return redirect(url_for('static', filename='images/network-scale-blue.svg'))
@@ -44,17 +54,6 @@ def favicon():
 
 @app.route("/")
 @app.route("/index.html")
-def index():
-    message = "Hello world"
-    agent = request.headers.get("User-Agent")
-    toSend = get_data()
-    toSend["lang"] = request.headers.get('Accept-Language')
-    template_data = {"message": message, "agent": agent,
-                     "product": emit_html_table(toSend),
-                     "current_time": datetime.utcnow()}
-    return render_template("index.html", **template_data)
-
-
 @app.route("/hello/")
 @app.route("/hello/<string:name>")
 @app.route("/hello/<path:name>")
@@ -67,8 +66,9 @@ def say_hello(name=None):
     else:
         name = "Stranger"
         logger.debug("Using default name %s " % name)
-    # return "Hello {}".format(name)
-    template_data = {"name": name}
+
+    toSend = get_data()
+    template_data = {"name": name, "product": emit_html_table(toSend)}
     return render_template("user.html", **template_data)
 
 
