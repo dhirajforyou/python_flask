@@ -1,17 +1,15 @@
-import copy
-import json
+
 import logging
 import os
 from datetime import datetime
 
-import json2table
-from flask import Flask, request, jsonify, render_template, send_from_directory, g
+from flask import Flask, jsonify, render_template, send_from_directory, g
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import Form
 from werkzeug.exceptions import HTTPException
-from wtforms import StringField, SubmitField
-from wtforms.validators import Required
+from wtforms import StringField, SubmitField, RadioField
+from wtforms.validators import DataRequired
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
@@ -25,20 +23,6 @@ if os.path.exists('static/js/lib/moment-with-locales.min.js'):
 app.config["SECRET_KEY"] = "shhhh... its private."
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
-data = json.load(open("data.json"))
-
-
-def get_data():
-    return copy.deepcopy(data)
-
-
-def emit_html_table(json_object):
-    build_direction = "LEFT_TO_RIGHT"
-    table_attributes = {"style": "width:100%"}
-    html = json2table.convert(json_object, build_direction=build_direction,
-                              table_attributes=table_attributes)
-    return html
 
 
 @app.before_request
@@ -58,31 +42,22 @@ def favicon():
 
 
 class Nameform(Form):
-    name = StringField("What is your name", validators=[Required()], render_kw={'autofocus': True})
+    name = StringField("What is your name", validators=[DataRequired()], render_kw={'autofocus': True})
+    checkmode = RadioField('checkmode', validators=[DataRequired()], choices=[('in', 'Check-In'), ('out', 'Check-Out')])
     submit = SubmitField("Submit")
 
 
 @app.route("/", methods=['GET', 'POST'])
-@app.route("/index.html", methods=['GET', 'POST'])
-@app.route("/hello/", methods=['GET', 'POST'])
-@app.route("/hello/<string:name>", methods=['GET', 'POST'])
-@app.route("/hello/<path:name>", methods=['GET', 'POST'])
-def say_hello(name=None):
-    if name:
-        logger.debug("Name found in the url")
-    elif request.args.get("name"):
-        logger.debug("Name taken from get param")
-        name = request.args.get("name")
-    else:
-        name = "Stranger"
-        logger.debug("Using default name %s " % name)
+def index():
     form = Nameform()
+    name = "Stranger"
+    checkmode = None
     if form.validate_on_submit():
-        user_name = form.name.data
+        name = form.name.data
+        checkmode = form.checkmode.data
         form.name.data = ''
-        if user_name:
-            name = user_name
-    template_data = {"name": name, "form": form}
+        form.checkmode.data = ''
+    template_data = {"name": name, "checkmode": checkmode, "form": form}
     return render_template("user.html", **template_data)
 
 
