@@ -62,7 +62,7 @@ def index():
         form.name.data = ''
         form.checkmode.data = ''
         return redirect(url_for('index'))
-    template_data = {"name": session.get("name"), "checkmode": session.get("checkmode", None), "form": form}
+    template_data = {"name": session.get("name", "Stranger"), "checkmode": session.get("checkmode", None), "form": form}
     return render_template("user.html", **template_data)
 
 
