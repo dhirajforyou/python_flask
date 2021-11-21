@@ -7,22 +7,6 @@
       {% if message %} {{message}} {% endif %}
     </h1>
   </div>
-
-  <div class="container">
-    {% if current_time %}
-      <p> The local date and time is
-        {{ moment(current_time).format('LLL') }}
-      </p>
-      <p>
-        That was {{ moment(current_time).fromNow(refresh=True) }}
-      </p>
-    {% endif %}
-  </div>
-  <div class="container">
-    {% if agent %}
-      User Agent: {{agent}}
-    {% endif %}
-  </div>
   <div class="container">
     {% if product %}
       {{product | safe}}
