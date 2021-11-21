@@ -3,7 +3,7 @@ import logging
 import os
 from datetime import datetime
 
-from flask import Flask, jsonify, render_template, send_from_directory, g
+from flask import Flask, jsonify, render_template, send_from_directory, g, session, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import Form
@@ -53,11 +53,10 @@ def index():
     name = "Stranger"
     checkmode = None
     if form.validate_on_submit():
-        name = form.name.data
-        checkmode = form.checkmode.data
-        form.name.data = ''
-        form.checkmode.data = ''
-    template_data = {"name": name, "checkmode": checkmode, "form": form}
+        session["name"] = form.name.data
+        session["checkmode"] = form.checkmode.data
+        return redirect(url_for('index'))
+    template_data = {"name": session.get("name"), "checkmode": session.get("checkmode", None), "form": form}
     return render_template("user.html", **template_data)
 
 
