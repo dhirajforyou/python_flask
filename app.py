@@ -1,20 +1,31 @@
-from flask import Flask, request, jsonify, render_template
-from werkzeug.exceptions import HTTPException
-from flask_bootstrap import Bootstrap
+import copy
 import json
-import json2table
 import logging
+import os
+from datetime import datetime
+
+import json2table
+from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from werkzeug.exceptions import HTTPException
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # serve bootstrap resources from local.
 app.config["BOOTSTRAP_SERVE_LOCAL"] = True
-
+if os.path.exists('static/js/lib/moment-with-locales.min.js'):
+    # if momentjs present in the local, then serve it from local.
+    app.config["local_moment"] = 'js/lib/moment-with-locales.min.js'
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
-# sample product data
 data = json.load(open("data.json"))
+
+
+def get_data():
+    return copy.deepcopy(data)
 
 
 def emit_html_table(json_object):
@@ -25,12 +36,21 @@ def emit_html_table(json_object):
     return html
 
 
+@app.route("/favicon.ico")
+def favicon():
+    # return redirect(url_for('static', filename='images/network-scale-blue.svg'))
+    return send_from_directory(os.path.join(app.root_path, 'static/images'), 'favicon.png')
+
+
 @app.route("/")
 @app.route("/index.html")
 def index():
     message = "Hello world"
     agent = request.headers.get("User-Agent")
-    template_data = {"message": message, "agent": agent, "product": emit_html_table(data)}
+    toSend = get_data()
+    toSend["lang"] = request.headers.get('Accept-Language')
+    template_data = {"message": message, "agent": agent, "product": emit_html_table(toSend), "app": app,
+                     "current_time": datetime.utcnow()}
     return render_template("index.html", **template_data)
 
 
