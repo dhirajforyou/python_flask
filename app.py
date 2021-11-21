@@ -43,7 +43,7 @@ def favicon():
 
 class Nameform(Form):
     name = StringField("What is your name", validators=[DataRequired()], render_kw={'autofocus': True})
-    checkmode = RadioField('checkmode', validators=[DataRequired()], choices=[('in', 'Check-In'), ('out', 'Check-Out')])
+    # checkmode = RadioField('checkmode', validators=[DataRequired()], choices=[('in', 'Check-In'), ('out', 'Check-Out')])
     submit = SubmitField("Submit")
 
 
@@ -58,11 +58,13 @@ def index():
             else:
                 flash("Glad to see you again... !", 'info')
         session["name"] = form.name.data
-        session["checkmode"] = form.checkmode.data
+        # session["checkmode"] = form.checkmode.data
         form.name.data = ''
-        form.checkmode.data = ''
+        # form.checkmode.data = ''
         return redirect(url_for('index'))
-    template_data = {"name": session.get("name", "Stranger"), "checkmode": session.get("checkmode", None), "form": form}
+    template_data = {"name": session.get("name", "Stranger"),
+                     # "checkmode": session.get("checkmode", None),
+                     "form": form}
     return render_template("user.html", **template_data)
 
 
