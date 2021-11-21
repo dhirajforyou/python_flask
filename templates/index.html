@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <div class="container">
-    {% if message %}
-      {{message}}
-    {% endif %}
+
+{% block page_content %}
+  <div class="page-header">
+    <h1>
+      {% if message %} {{message}} {% endif %}
+    </h1>
   </div>
+
   <div class="container">
     {% if current_time %}
       <p> The local date and time is
