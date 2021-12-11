@@ -9,6 +9,13 @@
           Thanks for checking {{checkmode}}.
         {% endif %}
       </h1>
+
+      {% if not known %}
+      <p> Nice to meet you!</p>
+      {% else %}
+      <p> welcome back. </p>
+      {% endif %}
+
   </div>
   {{ wtf.quick_form(form) }}
   <div class="container">
