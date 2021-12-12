@@ -49,7 +49,7 @@ def index():
         # session["checkmode"] = form.checkmode.data
         form.name.data = ''
         # form.checkmode.data = ''
-        return redirect(url_for('index'))
+        return redirect(url_for('.index'))
     template_data = {"name": session.get("name", "Stranger"),
                      "known": session.get("known", False),
                      # "checkmode": session.get("checkmode", None),
