@@ -9,3 +9,6 @@ db commands:
     flask db migrate -m "Initial migration"
  - upgrade db
     flask db upgrade
+
+test:
+ - python -m unittest -v
