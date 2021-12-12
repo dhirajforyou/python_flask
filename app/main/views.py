@@ -35,7 +35,7 @@ def index():
             user = User(username=form.name.data)
             db.session.add(user)
             session["known"] = False
-            send_async_mail(app.config["MAIL_ADMIN"], "New User", "mail/new_user", user=user)
+            # send_async_mail(app.config["MAIL_ADMIN"], "New User", "mail/new_user", user=user)
             logger.debug("mail part completed")
         else:
             session["known"] = True
