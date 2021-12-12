@@ -7,8 +7,8 @@
 
 {% block scripts%}
   {{ super() }}
-  {% if config.get("local_moment") %}
-    {{ moment.include_moment(local_js=url_for('static', filename=config.get("local_moment"), _external=True)) }}
+  {% if config.get("LOCAL_MOMENT") %}
+    {{ moment.include_moment(local_js=url_for('static', filename=config.get("LOCAL_MOMENT"), _external=True)) }}
   {% else %}
     {{ moment.include_moment() }}
   {% endif %}
