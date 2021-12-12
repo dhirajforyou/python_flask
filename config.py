@@ -27,6 +27,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL") or \
                               "sqlite:///" + os.path.join(basedir, "data-dev.sqlite")
 
+    LOCAL_MOMENT = "js/lib/moment-with-locales.min.js"
+    # serve bootstrap resources from local.
+    BOOTSTRAP_SERVE_LOCAL = True
+
 
 class TestingConfig(Config):
     TESTING = True
